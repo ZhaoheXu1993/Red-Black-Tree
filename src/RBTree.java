@@ -116,7 +116,7 @@ public class RBTree {
 		return null;          // means the node does not exist 
 	}
 	
-	public static TreeNode findSuccessor(TreeNode node){
+	public static TreeNode findSuccessor(TreeNode node){ 
 		if(node.left.right == null && node.right.left == null) {
 			int tmpID = node.ID;
 			int tmpCount = node.count;
@@ -150,6 +150,66 @@ public class RBTree {
 			cur.count = tmpCount;
 			return cur;
 		}
+	}
+	
+	public static TreeNode getSuccessor(TreeNode node){
+		TreeNode successor = null;
+		if(node.right == null) return successor;
+		successor = node.right;
+		while(successor.left != null){
+			successor = successor.left;
+		}
+		return successor;
+	}
+	
+	public static TreeNode getPrecursor(TreeNode node){
+		TreeNode precursor = null;
+		if(node.left == null) return precursor;
+		precursor = node.left;
+		while(precursor.right != null){
+			precursor = precursor.right;
+		}
+		return precursor;
+	}
+	
+	public static TreeNode getSuccessorById(TreeNode root, int ID){
+		TreeNode successor = null;
+		if(RBTree.getRoot() == null) return successor;
+		if(ID < root.ID){
+			TreeNode root_precursor = getPrecursor(root);
+			if(root_precursor == null) return root;
+			if(ID >= root_precursor.ID) return root;
+			else
+				return getSuccessorById(root.left, ID);
+		}
+		if(ID >= root.ID){
+			TreeNode root_successor = getSuccessor(root);
+			if(root_successor == null) return null; 
+			if(ID < root_successor.ID) return root_successor;
+			else
+				return getSuccessorById(root.right, ID);
+		} 
+		return successor;
+	}
+	
+	public static TreeNode getPrecursorById(TreeNode root, int ID){
+		TreeNode precursor = null;
+		if(RBTree.getRoot() == null) return precursor;
+		if(ID > root.ID){
+			TreeNode root_successor = getSuccessor(root);
+			if(root_successor == null) return root;
+			if(ID <= root_successor.ID) return root;
+			else
+				return getPrecursorById(root.right, ID);
+		}
+		if(ID <= root.ID){
+			TreeNode root_precursor = getPrecursor(root);
+			if(root_precursor == null) return null;
+			if(ID > root_precursor.ID) return root_precursor;
+			else
+				return getPrecursorById(root.left, ID);
+		}
+		return precursor;
 	}
 	
 	public static void delete(TreeNode node){
@@ -361,9 +421,11 @@ public class RBTree {
 			if(parent.ID >= xnode.ID && parent.ID <= ynode.ID)
 				return parent;
 			if(parent.ID > ynode.ID){
+				if(parent.left == null) return null;
 				parent = parent.left;
 			}
 			if(parent.ID < xnode.ID){
+				if(parent.right == null) return null;
 				parent = parent.right;
 			}
 		}
